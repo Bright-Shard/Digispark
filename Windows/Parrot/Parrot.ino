@@ -1,9 +1,9 @@
 /*
  *
- * Windows Parrot by BrightShard
- * Gonna be honest I haven't even tested this, but in theory, it uses the Run
- * menu in Windows to open the Command Prompt and cURL parrot.live for a cute,
- * dancing parrot
+ *  Windows Parrot by BrightShard
+ *  Gonna be honest I haven't even tested this, but in theory, it uses the Run
+ *  menu in Windows to open the Command Prompt and cURL parrot.live for a cute,
+ *  dancing parrot
  *
  */
 #include "DigiKeyboard.h"
@@ -26,7 +26,7 @@ void setup() {
 
   DigiKeyboard.update(); // Init keyboard
   DigiKeyboard.sendKeyStroke(0); // Make computer recognize keyboard, needed for older systems
-  DigiKeyboard.delay(1000 * slowFactor); // Let computer register keyboard
+  DigiKeyboard.delay(500 * slowFactor); // Let computer register keyboard
 
   digitalWrite(0, HIGH); // Give btn power
   digitalWrite(1, HIGH); // Turn on LED, showing the script is ready to run
@@ -39,7 +39,7 @@ void loop() {
     digitalWrite(1, LOW); // Turn off LED, showing the script is running
     canRun = false; // Script is running and shouldn't be launched again
     script(); // Run the attack
-    DigiKeyboard.delay(1000 * slowFactor); // Delay between attacks for stability
+    DigiKeyboard.delay(500 * slowFactor); // Delay between attacks for stability
     digitalWrite(1, HIGH); // Turn on LED, showing the script can be run
     canRun = true; // Script has run and it's OK to launch it again
   }

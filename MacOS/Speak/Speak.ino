@@ -1,11 +1,31 @@
+/*
+ *
+ *  MacOS Speaker by BrightShard
+ *  Opens the Terminal via Spotlight, then says the provided message
+ *
+ *  The script automatically waits depending on the length of the message and
+ *  then closes the terminal.
+ *
+ */
+
 #include "DigiKeyboard.h"
 int btnPressed = 1; // Track if btn is pressed
 int canRun = true; // Track if script is running or not
 int slowFactor = 1; // Turn this up for slow computers
+const String msg = "You've been pwned :D"; // Message to say
 
 // The actual keyboard attack
 void script() {
-  DigiKeyboard.println("Hello, world!");
+  DigiKeyboard.sendKeyStroke(KEY_SPACE, MOD_GUI_LEFT); // Open Spotlight
+  DigiKeyboard.delay(200 * slowFactor); // Wait for spotlight to open
+  DigiKeyboard.println("Terminal"); // Open the terminal
+  DigiKeyboard.delay(1000 * slowFactor); // Wait for the terminal to open
+  DigiKeyboard.println("say \""+msg+"\""); // Type say command
+  //DigiKeyboard.println(msg); // Append message & hit enter
+  DigiKeyboard.delay((msg.length() * 100) * slowFactor); // Wait for message to finish
+  DigiKeyboard.println("exit"); // Clear terminal
+  DigiKeyboard.delay(50 * slowFactor); // Be nice to the computer
+  DigiKeyboard.sendKeyStroke(KEY_Q, MOD_GUI_LEFT); // Close terminal
 }
 
 void setup() {
