@@ -44,6 +44,7 @@ void DigiKeyPlus::Update()
     }
   } else {
     _script(); // Run the attack
+    DigiKeyboard.delay(5000 * _slowFactor);
   }
 }
 void DigiKeyPlus::Append(const char* text)
