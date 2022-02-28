@@ -1,0 +1,7 @@
+DigiKeyPlus    KEYWORD1
+Update         KEYWORD2
+MacSpotlight   KEYWORD2
+MacTerminal    KEYWORD2
+WinRun         KEYWORD2
+VolumeUp       KEYWORD2
+VolumeDown     KEYWORD2

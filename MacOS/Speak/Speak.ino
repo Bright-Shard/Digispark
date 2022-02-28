@@ -9,55 +9,41 @@
  *
  */
 
-#include "DigiKeyboard.h"
-#define MOD_VOLUME_UP 128
-#define MOD_VOLUME_DOWN 129
-int btnPressed = 1; // Track if btn is pressed
-int canRun = true; // Track if script is running or not
-int slowFactor = 1; // Turn this up for slow computers
-const String msg = "You've been pwned :D"; // Message to say
+#include "DigiKeyPlus.h"
+DigiKeyPlus keyboard; // Will handle the keyboard attacks
+char tempChar; // Used to iterating through PROGMEM chars
+// Message is stored in PROGMEM to save RAM
+const char msg[] PROGMEM = "Never gonna give you up / Never gonna let y\
+ou down / Never gonna run around and desert you / Never gonna make you cry / Never gon\
+na say goodbye / Never gonna tell a lie and hurt you";
 
 // The actual keyboard attack
 void script() {
-  for(int x = 0; x < 10; x++) {
-    DigiKeyboard.sendKeyStroke(MOD_VOLUME_UP); // Turn volume up 10 times
+  keyboard.VolumeUp(); // Turn up the volume
+  keyboard.MacSpotlight("Terminal"); // Open the terminal
+  // Type the say command
+  keyboard.Append("say \""); // Start the command
+  for (byte k = 0; k < strlen_P(msg); k++) {
+    tempChar = pgm_read_byte_near(msg + k);
+    keyboard.Append(tempChar);
   }
-  DigiKeyboard.sendKeyStroke(KEY_SPACE, MOD_GUI_LEFT); // Open Spotlight
-  DigiKeyboard.delay(200 * slowFactor); // Wait for spotlight to open
-  DigiKeyboard.println("Terminal"); // Open the terminal
-  DigiKeyboard.delay(1000 * slowFactor); // Wait for the terminal to open
-  DigiKeyboard.println("say \""+msg+"\""); // Type say command
-  //DigiKeyboard.println(msg); // Append message & hit enter
-  DigiKeyboard.delay((msg.length() * 100) * slowFactor); // Wait for message to finish
-  DigiKeyboard.println("exit"); // Clear terminal
-  DigiKeyboard.delay(50 * slowFactor); // Be nice to the computer
-  DigiKeyboard.sendKeyStroke(KEY_Q, MOD_GUI_LEFT); // Close terminal
-  for(int x = 0; x < 10; x++) {
-    DigiKeyboard.sendKeyStroke(MOD_VOLUME_DOWN); // Turn volume down 10 times
-  }
+  keyboard.Type("\""); // Close quotes & hit enter
+  keyboard.Wait((strlen_P(msg) * 100) + 20); // Wait for message to finish
+  keyboard.Type("exit"); // Clear terminal
+  keyboard.Wait(50); // Be nice to the computer
+  keyboard.Type(KEY_Q, CMD_LEFT); // Close terminal
+  keyboard.VolumeDown(); // Reset volume
 }
 
 void setup() {
-  pinMode(1, OUTPUT); // LED
-  pinMode(0, INPUT); // Btn
-
-  DigiKeyboard.update(); // Init keyboard
-  DigiKeyboard.sendKeyStroke(0); // Make computer recognize keyboard, needed for older systems
-  DigiKeyboard.delay(500 * slowFactor); // Let computer register keyboard
-
-  digitalWrite(0, HIGH); // Give btn power
-  digitalWrite(1, HIGH); // Turn on LED, showing the script is ready to run
+  /* Keyboard attack handler:
+   *  1 - the slowFactor variable, turn this up on slower machines for more delays & stability
+   *  0 - the pin of the pushbutton on the DigiSpark, change it to -1 if there's no button
+   *  script - the function of the HID attack
+   */
+  keyboard.Init(1, 0, script);
 }
 
 void loop() {
-  DigiKeyboard.update(); // Keep keyboard alive
-  btnPressed = digitalRead(0); // Check if btn is pressed or not
-  if (btnPressed == 0 && canRun == true) {
-    digitalWrite(1, LOW); // Turn off LED, showing the script is running
-    canRun = false; // Script is running and shouldn't be launched again
-    script(); // Run the attack
-    DigiKeyboard.delay(500 * slowFactor); // Delay between attacks for stability
-    digitalWrite(1, HIGH); // Turn on LED, showing the script can be run
-    canRun = true; // Script has run and it's OK to launch it again
-  }
+  keyboard.Update(); // Keep keyboard alive & handle button presses
 }

@@ -1,46 +1,28 @@
 /*
  *
  *  Windows Parrot by BrightShard
- *  Gonna be honest I haven't even tested this, but in theory, it uses the Run
- *  menu in Windows to open the Command Prompt and cURL parrot.live for a cute,
- *  dancing parrot
+ *  Uses the Run menu to open the Command Prompt, and
+ *  then cURLs parrot.live for a cute, dancing parrot
  *
  */
-#include "DigiKeyboard.h"
-int btnPressed = 1; // Track if btn is pressed
-int canRun = true; // Track if script is running or not
-int slowFactor = 1; // Turn this up for slow computers
+#include "DigiKeyPlus.h"
+DigiKeyPlus keyboard;
 
 // The actual keyboard attack
 void script() {
-  DigiKeyboard.sendKeyStroke(KEY_R, MOD_GUI_LEFT); // Open Spotlight
-  DigiKeyboard.delay(200 * slowFactor); // Wait for Spotlight to open
-  DigiKeyboard.println("cmd"); // Open the terminal
-  DigiKeyboard.delay(1000 * slowFactor); // Wait for terminal to open
-  DigiKeyboard.println("curl parrot.live");
+  keyboard.WinRun("cmd"); // Open the command prompt
+  keyboard.Type("curl parrot.live"); // cURL parrot.live
 }
 
 void setup() {
-  pinMode(1, OUTPUT); // LED
-  pinMode(0, INPUT); // Btn
-
-  DigiKeyboard.update(); // Init keyboard
-  DigiKeyboard.sendKeyStroke(0); // Make computer recognize keyboard, needed for older systems
-  DigiKeyboard.delay(500 * slowFactor); // Let computer register keyboard
-
-  digitalWrite(0, HIGH); // Give btn power
-  digitalWrite(1, HIGH); // Turn on LED, showing the script is ready to run
+  /* Keyboard attack handler:
+   *  1 - the slowFactor variable, turn this up on slower machines for more delays & stability
+   *  0 - the pin of the pushbutton on the DigiSpark, change it to -1 if there's no button
+   *  script - the function of the HID attack
+   */
+  keyboard.Init(1, 0, script);
 }
 
 void loop() {
-  DigiKeyboard.update(); // Keep keyboard alive
-  btnPressed = digitalRead(0); // Check if btn is pressed or not
-  if (btnPressed == 0 && canRun == true) {
-    digitalWrite(1, LOW); // Turn off LED, showing the script is running
-    canRun = false; // Script is running and shouldn't be launched again
-    script(); // Run the attack
-    DigiKeyboard.delay(500 * slowFactor); // Delay between attacks for stability
-    digitalWrite(1, HIGH); // Turn on LED, showing the script can be run
-    canRun = true; // Script has run and it's OK to launch it again
-  }
+  keyboard.Update(); // Keep keyboard alive & handle button presses
 }
